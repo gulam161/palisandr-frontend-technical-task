@@ -10,9 +10,10 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useShop();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist, isInCart } = useShop();
   
   const inWishlist = isInWishlist(product.id);
+  const inCart = isInCart(product.id);
 
   const toggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,21 +44,22 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Quick Actions overlay */}
-        <div className="absolute inset-x-0 bottom-4 md:inset-0 md:bottom-auto md:bg-primary/5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end md:items-center justify-center gap-3 md:gap-4 z-10 px-4 pointer-events-none md:pointer-events-auto">
+        <div className="absolute inset-x-0 bottom-40 md:inset-0 md:bottom-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end md:items-center justify-center gap-3 md:gap-4 z-10 px-4 pointer-events-none md:pointer-events-auto">
           <button 
             onClick={toggleWishlist}
-            className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 transform md:translate-y-10 md:group-hover:translate-y-0 shadow-lg pointer-events-auto ${inWishlist ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary hover:text-white"}`}
+            className={`w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 transform md:translate-y-10 md:group-hover:translate-y-0 shadow-lg pointer-events-auto ${inWishlist ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary hover:text-white"}`}
           >
             <Icon icon={inWishlist ? "ion:heart" : "ion:heart-outline"} className="text-xl md:text-2xl" />
           </button>
           <button 
+            disabled={inCart}
             onClick={(e) => {
               e.preventDefault();
-              addToCart(product);
+              if (!inCart) addToCart(product);
             }}
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white text-primary hover:bg-primary hover:text-white flex items-center justify-center transition-all duration-300 transform md:translate-y-10 md:group-hover:translate-y-0 delay-100 shadow-lg pointer-events-auto"
+            className={`w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300 transform md:translate-y-10 md:group-hover:translate-y-0 delay-100 shadow-lg pointer-events-auto ${inCart ? 'bg-green-500 text-white' : 'bg-white text-primary hover:bg-primary hover:text-white'}`}
           >
-            <Icon icon="ion:bag-handle-outline" className="text-xl md:text-2xl" />
+            <Icon icon={inCart ? "ion:checkmark" : "ion:bag-handle-outline"} className="text-xl md:text-2xl" />
           </button>
         </div>
       </Link>
@@ -69,15 +71,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             {product.title}
           </Link>
 
-          {/* <p className="text-[10px] font-secondary font-bold text-primary opacity-60 leading-relaxed tracking-wide">
+          <p className="text-[10px] font-secondary font-bold text-primary opacity-60 leading-relaxed tracking-wide">
           {truncate(product.description, 80)}
-        </p> */}
+        </p>
         </div>
         
         <div className="flex flex-col items-center gap-1">
           <div className="flex items-center gap-3">
-            <span className="text-primary font-bold font-mono text-lg">₹{(product.price * 80).toLocaleString()}</span>
-            <span className="text-primary/40 font-mono text-sm line-through decoration-primary/40">₹{(product.price * 100).toLocaleString()}</span>
+            <span className="text-primary font-bold font-mono text-lg">${product.price}</span>
+            <span className="text-primary/40 font-mono text-sm line-through decoration-primary/40">${(product.price * 1.5).toFixed(2)}</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-primary/80 opacity-60">
             <div className="flex items-center">

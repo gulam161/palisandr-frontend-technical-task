@@ -4,24 +4,17 @@ import { useShop } from "@/context/ShopContext";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, cartTotal } = useShop();
 
   if (cart.length === 0) {
     return (
-      <div className="container mx-auto px-6 py-32 text-center space-y-8 animate-fade-in">
-        <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-8">
-          <Icon icon="ion:cart-outline" className="text-4xl text-zinc-400" />
-        </div>
-        <h1 className="text-4xl font-bold uppercase tracking-widest leading-tight">Your Cart is Empty</h1>
-        <p className="text-zinc-500 max-w-sm mx-auto leading-relaxed">
-          Looks like you haven&apos;t added any items to your cart yet. Browse our collections to find the perfect piece.
-        </p>
-        <Link href="/products" className="inline-block px-12 py-5 bg-black dark:bg-white text-white dark:text-black font-bold uppercase text-xs tracking-[0.3em] hover:bg-accent dark:hover:bg-accent transition-all duration-300 transform hover:-translate-y-1">
-          Start Shopping
-        </Link>
-      </div>
+      <EmptyState 
+        title="Your Cart is Empty" 
+        description="Looks like you haven't added any items to your cart yet. Browse our collections to find the perfect piece." 
+      />
     );
   }
 

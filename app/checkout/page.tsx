@@ -6,9 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function CheckoutPage() {
-  const { cart, cartTotal, clearCart } = useShop();
+  const { cart, cartTotal, clearCart, addOrder } = useShop();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -21,6 +22,15 @@ export default function CheckoutPage() {
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
+
+      const newOrder = {
+        id: Math.random().toString(36).substring(2, 9),
+        date: new Date().toISOString(),
+        items: cart,
+        total: cartTotal
+      };
+      
+      addOrder(newOrder);
       clearCart();
     }, 2000);
   };
@@ -49,18 +59,10 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="container mx-auto px-6 py-32 text-center space-y-8 animate-fade-in">
-        <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-8">
-          <Icon icon="ion:cart-outline" className="text-4xl text-zinc-400" />
-        </div>
-        <h1 className="text-4xl font-bold uppercase tracking-widest leading-tight">Nothing to Checkout</h1>
-        <p className="text-zinc-500 max-w-sm mx-auto leading-relaxed">
-          Your cart is empty. Please add some items to your cart before proceeding to checkout.
-        </p>
-        <Link href="/products" className="inline-block px-12 py-5 bg-black dark:bg-white text-white dark:text-black font-bold uppercase text-xs tracking-[0.3em] hover:bg-accent dark:hover:bg-accent transition-all duration-300 transform hover:-translate-y-1">
-          Start Shopping
-        </Link>
-      </div>
+      <EmptyState 
+        title="Nothing to Checkout" 
+        description="Your cart is empty. Please add some items to your cart before proceeding to checkout." 
+      />
     );
   }
 
